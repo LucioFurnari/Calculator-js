@@ -2,18 +2,22 @@ const displayCalculator = document.querySelector(".result-display");
 const numberBtns = document.querySelectorAll(".number-container button")
 const operatorBtns = document.querySelectorAll(".operators-container button");
 const turnNegativeBtn = document.querySelector(".negative-btn");
+const turnFloatNumberBtn = document.querySelector(".float-btn");
 
 let firstArrayNumbers = [];
 let secondArrayNumbers = [];
 let isOperatorCheck = false;
-let firstNumber;
-let secondNumber;
+let firstNumber = 0;
+let secondNumber = 0;
 let isResultValid = false;
 let selectOperator;
 
 let isNegative = false;
-let isFirstNumberNegative = false;
-let isSecondNumberNegative = false;
+let getFloatNumber = false;
+let isFloatNumber = false;
+let isSecondFloatNumber = false;
+// let isFirstNumberNegative = false;
+// let isSecondNumberNegative = false;
 displayCalculator.textContent = 0;
 function add(numOne,numTwo){
     return numOne + numTwo;
@@ -34,16 +38,38 @@ function operate(operator,numOne,numTwo){
 
 function getNumber(value){
     let numbers;
-    if(!isOperatorCheck){
-        firstArrayNumbers.push(parseInt(value));
+    let isArrayFloat;
+    if(!isOperatorCheck && value != ""){
+        isArrayFloat = firstArrayNumbers.find(elem => elem == ".")
+        if(getFloatNumber && isArrayFloat == undefined){
+            getFloatNumber = false;
+            isFloatNumber = true;
+            firstArrayNumbers.push(".");
+        }
+        firstArrayNumbers.push(value);
+        console.log(firstArrayNumbers);
         numbers = firstArrayNumbers.join("");
-        // displayCalculator.textContent = numbers;
-        return parseInt(numbers);
+        console.log(numbers);
+        if(isFloatNumber){
+            return parseFloat(numbers);
+        } else {
+            return parseInt(numbers);
+        }
     } else {
-        secondArrayNumbers.push(parseInt(value));
+        isArrayFloat = secondArrayNumbers.find(elem => elem == ".");
+        if(getFloatNumber && isArrayFloat == undefined && !isSecondFloatNumber){
+            getFloatNumber = false;
+            isSecondFloatNumber = true;
+            secondArrayNumbers.push(".");
+        }
+        secondArrayNumbers.push(value);
         numbers = secondArrayNumbers.join("");
-        // displayCalculator.textContent = numbers;
-        return parseInt(numbers);
+        if(isSecondFloatNumber){
+            console.log(numbers);
+            return parseFloat(numbers);
+        } else {
+            return parseInt(numbers);
+        }
     }
 };
 
@@ -67,14 +93,14 @@ function setNegativeNumber(){
     } 
     }
 }
-console.log(parseFloat(2));
 function setFloatNumber(){
-
-}
+    getFloatNumber = true;
+};
 //////////
 
 numberBtns.forEach(button => {
     button.addEventListener("click",(event) => {
+    if(event.target.value){
         if(!isOperatorCheck){
             firstNumber = getNumber(event.target.value);
             displayCalculator.textContent = firstNumber;
@@ -82,18 +108,21 @@ numberBtns.forEach(button => {
             secondNumber = getNumber(event.target.value);
             displayCalculator.textContent = secondNumber;
         }
-    });
+    }});
 });
-turnNegativeBtn.addEventListener("click", setNegativeNumber)
+turnNegativeBtn.addEventListener("click", setNegativeNumber);
+turnFloatNumberBtn.addEventListener("click",setFloatNumber);
+
 
 operatorBtns.forEach(button => {
     button.addEventListener("click",(event) => {
+        getFloatNumber = false;
         switch (event.target.value) {
             case "clean":
                 isOperatorCheck = false;
                 firstArrayNumbers = [];
                 secondArrayNumbers = [];
-                // firstNumber = 0;
+                firstNumber = 0;
                 // secondNumber = 0;
                 displayCalculator.textContent = firstNumber;
                 break;
@@ -132,6 +161,9 @@ operatorBtns.forEach(button => {
             isResultValid = false;
             isOperatorCheck = false;
             console.log(firstNumber,selectOperator,secondNumber);
+            if(secondNumber == 0){
+                secondNumber = firstNumber;
+            }
             switch (selectOperator) {
                 case "+":
                     displayCalculator.textContent = operate(add,firstNumber,secondNumber);
