@@ -8,7 +8,7 @@ let firstArrayNumbers = [];
 let secondArrayNumbers = [];
 let isOperatorCheck = false;
 let firstNumber = 0;
-let secondNumber = 0;
+let secondNumber;
 let isResultValid = false;
 let selectOperator;
 
@@ -16,9 +16,9 @@ let isNegative = false;
 let getFloatNumber = false;
 let isFloatNumber = false;
 let isSecondFloatNumber = false;
-// let isFirstNumberNegative = false;
-// let isSecondNumberNegative = false;
-displayCalculator.textContent = 0;
+////////////////////////////////////////
+
+displayCalculator.textContent = firstNumber;
 function add(numOne,numTwo){
     return numOne + numTwo;
 };
@@ -47,10 +47,8 @@ function getNumber(value){
             firstArrayNumbers.push(".");
         }
         firstArrayNumbers.push(value);
-        console.log(firstArrayNumbers);
         numbers = firstArrayNumbers.join("");
-        console.log(numbers);
-        if(isFloatNumber){
+        if(isFloatNumber){ // Cambiar el nombre de la variable
             return parseFloat(numbers);
         } else {
             return parseInt(numbers);
@@ -64,8 +62,8 @@ function getNumber(value){
         }
         secondArrayNumbers.push(value);
         numbers = secondArrayNumbers.join("");
-        if(isSecondFloatNumber){
-            console.log(numbers);
+        if(isSecondFloatNumber){ //Cambiar el nombre de la variable
+            console.log(numbers); // Sacar
             return parseFloat(numbers);
         } else {
             return parseInt(numbers);
@@ -117,7 +115,7 @@ turnFloatNumberBtn.addEventListener("click",setFloatNumber);
 operatorBtns.forEach(button => {
     button.addEventListener("click",(event) => {
         getFloatNumber = false;
-        switch (event.target.value) {
+        switch (event.target.value) { // Mejorar si es posible
             case "clean":
                 isOperatorCheck = false;
                 firstArrayNumbers = [];
@@ -125,6 +123,36 @@ operatorBtns.forEach(button => {
                 firstNumber = 0;
                 // secondNumber = 0;
                 displayCalculator.textContent = firstNumber;
+                break;
+            case "delete":
+            let numberToString;
+                if(!isOperatorCheck && firstArrayNumbers){
+                    numberToString = firstNumber.toString().split("").slice(0,-1).join("")
+                    firstArrayNumbers.splice(-1,1);
+                    if(numberToString == ""){
+                        numberToString = 0;
+                    }
+                    console.log(numberToString);
+                    if(isFloatNumber){
+                        firstNumber = parseFloat(numberToString)
+                    }else{
+                        firstNumber = parseInt(numberToString);   
+                    };
+                    console.log(firstNumber);
+                    displayCalculator.textContent = firstNumber;
+                } else if(isOperatorCheck && secondArrayNumbers){
+                    numberToString = secondNumber.toString().split("").slice(0,-1).join("");
+                    secondArrayNumbers.splice(-1,1);
+                    if(numberToString == ""){
+                        numberToString = 0;
+                    }
+                    if(isSecondFloatNumber){
+                        secondNumber = parseFloat(numberToString);
+                    } else {
+                        secondNumber = parseInt(numberToString);
+                    };
+                    displayCalculator.textContent = secondNumber;
+                };
                 break;
             case "+":
                 isOperatorCheck = true;
@@ -161,7 +189,7 @@ operatorBtns.forEach(button => {
             isResultValid = false;
             isOperatorCheck = false;
             console.log(firstNumber,selectOperator,secondNumber);
-            if(secondNumber == 0){
+            if(secondNumber == undefined){
                 secondNumber = firstNumber;
             }
             switch (selectOperator) {
@@ -170,7 +198,7 @@ operatorBtns.forEach(button => {
                     firstNumber = operate(add,firstNumber,secondNumber);
                     firstArrayNumbers = [];
                     secondArrayNumbers = [];
-                    selectOperator = "";
+                    // selectOperator = "";
                     break;
                 case "-":
                     displayCalculator.textContent = operate(subtract,firstNumber,secondNumber);
@@ -185,10 +213,14 @@ operatorBtns.forEach(button => {
                     secondArrayNumbers = [];
                     break;
                 case "/":
+                    if(secondNumber == 0){
+                        displayCalculator.textContent = "bruh";
+                    } else {
                     displayCalculator.textContent = operate(divide,firstNumber,secondNumber);
                     firstNumber = operate(divide,firstNumber,secondNumber);
                     firstArrayNumbers = [];
                     secondArrayNumbers = [];
+                    }
                     break;
                 default:
                     break;
