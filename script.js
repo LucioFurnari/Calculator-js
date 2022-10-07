@@ -125,7 +125,7 @@ function getResult(){
                 break;
         };
         displayCalculator.textContent = result;
-        if(result == "bruh"){
+        if(typeof(result) == "string"){
             firstNumber = 0;
         } else {
             firstNumber = result;
