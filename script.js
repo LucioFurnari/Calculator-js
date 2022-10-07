@@ -3,6 +3,9 @@ const numberBtns = document.querySelectorAll(".number-container button")
 const operatorBtns = document.querySelectorAll(".operators-container button");
 const turnNegativeBtn = document.querySelector(".negative-btn");
 const turnFloatNumberBtn = document.querySelector(".float-btn");
+const resultBtn = document.querySelector(".result-btn");
+const cleanBtn = document.querySelector(".clean-btn");
+const deleteBtn = document.querySelector(".delete-btn");
 
 let firstArrayNumbers = [];
 let secondArrayNumbers = [];
@@ -16,6 +19,9 @@ let isNegative = false;
 let getFloatNumber = false;
 let isFloatNumber = false;
 let isSecondFloatNumber = false;
+
+let lastOperator;
+let newOperator;
 ////////////////////////////////////////
 
 displayCalculator.textContent = firstNumber;
@@ -29,7 +35,7 @@ function multiply(numOne,numTwo){
     return numOne * numTwo;
 };
 function divide(numOne,numTwo){
-    return numOne / numTwo;
+        return numOne / numTwo;
 };
 
 function operate(operator,numOne,numTwo){
@@ -45,30 +51,21 @@ function getNumber(value){
             getFloatNumber = false;
             isFloatNumber = true;
             firstArrayNumbers.push(".");
-        }
+        };
         firstArrayNumbers.push(value);
         numbers = firstArrayNumbers.join("");
-        if(isFloatNumber){ // Cambiar el nombre de la variable
-            return parseFloat(numbers);
-        } else {
-            return parseInt(numbers);
-        }
+        return (isFloatNumber ? parseFloat(numbers) : parseInt(numbers));
     } else {
         isArrayFloat = secondArrayNumbers.find(elem => elem == ".");
         if(getFloatNumber && isArrayFloat == undefined && !isSecondFloatNumber){
             getFloatNumber = false;
             isSecondFloatNumber = true;
             secondArrayNumbers.push(".");
-        }
+        };
         secondArrayNumbers.push(value);
         numbers = secondArrayNumbers.join("");
-        if(isSecondFloatNumber){ //Cambiar el nombre de la variable
-            console.log(numbers); // Sacar
-            return parseFloat(numbers);
-        } else {
-            return parseInt(numbers);
-        }
-    }
+        return (isSecondFloatNumber ? parseFloat(numbers) : parseInt(numbers)); 
+    };
 };
 
 function setNegativeNumber(){
@@ -88,13 +85,100 @@ function setNegativeNumber(){
     } else if (secondNumber != undefined && !isNegative ){
         secondNumber = secondNumber * -1;
         displayCalculator.textContent = secondNumber;
-    } 
-    }
-}
+    } };
+};
 function setFloatNumber(){
     getFloatNumber = true;
 };
-//////////
+
+function getOperator(event){
+if(event.target.value){
+    isOperatorCheck = true;
+    if(lastOperator && secondNumber){
+        newOperator = event.target.value;
+        // displayCalculator.textContent  = 
+        getResult();
+        lastOperator = newOperator;
+    } else {
+        lastOperator = event.target.value;
+    };
+}};
+
+function getResult(){
+    if(lastOperator && secondNumber || secondNumber == 0){
+        let result;
+        switch (lastOperator) {
+            case "+":
+                result = add(firstNumber,secondNumber);
+                break;
+            case "-":
+                result = subtract(firstNumber,secondNumber);
+                break;
+            case "*":
+                result = multiply(firstNumber,secondNumber);
+                break;
+            case "/":
+                result = secondNumber == 0 ? "bruh" : divide(firstNumber,secondNumber);
+                // result = divide(firstNumber,secondNumber);
+                break;
+            default:
+                break;
+        };
+        console.log(firstNumber);
+        console.log(secondNumber);
+        console.log(result);
+        displayCalculator.textContent = result;
+        if(result == "bruh"){
+            firstNumber = 0;
+        } else {
+            firstNumber = result;
+        };
+        lastOperator = undefined;
+        firstArrayNumbers = [];
+        secondArrayNumbers = [];
+        // return result;
+    };
+}
+
+function cleanNumbers(){
+    firstArrayNumbers = [];
+    secondArrayNumbers = [];
+    firstNumber = 0;
+    secondNumber = undefined;
+    displayCalculator.textContent = firstNumber;
+};
+
+function deleteNumber(){
+    let numberToString;
+        if(!isOperatorCheck && firstArrayNumbers){
+            firstArrayNumbers.splice(-1,1);
+            numberToString = firstArrayNumbers.join("");
+            firstNumber = numberToString
+            if(numberToString == ""){
+                numberToString = 0;
+            }
+            if(isFloatNumber){
+                firstNumber = parseFloat(numberToString)
+            }else{
+                firstNumber = parseInt(numberToString);   
+            };
+            displayCalculator.textContent = numberToString;
+        } else if(isOperatorCheck && secondArrayNumbers){
+            secondArrayNumbers.splice(-1,1);
+            numberToString = secondArrayNumbers.join("");
+            secondNumber = numberToString;
+            if(numberToString == ""){
+                numberToString = 0;
+            }
+            if(isSecondFloatNumber){
+                secondNumber = parseFloat(numberToString);
+            } else {
+                secondNumber = parseInt(numberToString);
+            };
+            displayCalculator.textContent = numberToString;
+        };
+}
+////////////////////////////////////////////////////////////////////////////////
 
 numberBtns.forEach(button => {
     button.addEventListener("click",(event) => {
@@ -111,159 +195,16 @@ numberBtns.forEach(button => {
 turnNegativeBtn.addEventListener("click", setNegativeNumber);
 turnFloatNumberBtn.addEventListener("click",setFloatNumber);
 
-
 operatorBtns.forEach(button => {
-    button.addEventListener("click",(event) => {
-        getFloatNumber = false;
-        switch (event.target.value) { // Mejorar si es posible
-            case "clean":
-                isOperatorCheck = false;
-                firstArrayNumbers = [];
-                secondArrayNumbers = [];
-                firstNumber = 0;
-                // secondNumber = 0;
-                displayCalculator.textContent = firstNumber;
-                break;
-            case "delete":
-            let numberToString;
-                if(!isOperatorCheck && firstArrayNumbers){
-                    numberToString = firstNumber.toString().split("").slice(0,-1).join("")
-                    firstArrayNumbers.splice(-1,1);
-                    if(numberToString == ""){
-                        numberToString = 0;
-                    }
-                    console.log(numberToString);
-                    if(isFloatNumber){
-                        firstNumber = parseFloat(numberToString)
-                    }else{
-                        firstNumber = parseInt(numberToString);   
-                    };
-                    console.log(firstNumber);
-                    displayCalculator.textContent = firstNumber;
-                } else if(isOperatorCheck && secondArrayNumbers){
-                    numberToString = secondNumber.toString().split("").slice(0,-1).join("");
-                    secondArrayNumbers.splice(-1,1);
-                    if(numberToString == ""){
-                        numberToString = 0;
-                    }
-                    if(isSecondFloatNumber){
-                        secondNumber = parseFloat(numberToString);
-                    } else {
-                        secondNumber = parseInt(numberToString);
-                    };
-                    displayCalculator.textContent = secondNumber;
-                };
-                break;
-            case "+":
-                isOperatorCheck = true;
-                selectOperator = "+";
-                isResultValid = true;
-                firstArrayNumbers = [];
-                secondArrayNumbers = [];
-                break;
-            case "-":
-                isOperatorCheck = true;
-                selectOperator = "-";
-                isResultValid = true;
-                firstArrayNumbers = [];
-                secondArrayNumbers = [];
-                break;
-            case "*":
-                isOperatorCheck = true;
-                selectOperator = "*";
-                isResultValid = true;
-                firstArrayNumbers = [];
-                secondArrayNumbers = [];
-                break;
-            case "/":
-                isOperatorCheck = true;
-                selectOperator = "/"
-                isResultValid = true;
-                firstArrayNumbers = [];
-                secondArrayNumbers = [];
-                break;
-            default:
-                break;
-        }
-        if(isResultValid && event.target.value == "result"){
-            isResultValid = false;
-            isOperatorCheck = false;
-            console.log(firstNumber,selectOperator,secondNumber);
-            if(secondNumber == undefined){
-                secondNumber = firstNumber;
-            }
-            switch (selectOperator) {
-                case "+":
-                    displayCalculator.textContent = operate(add,firstNumber,secondNumber);
-                    firstNumber = operate(add,firstNumber,secondNumber);
-                    firstArrayNumbers = [];
-                    secondArrayNumbers = [];
-                    // selectOperator = "";
-                    break;
-                case "-":
-                    displayCalculator.textContent = operate(subtract,firstNumber,secondNumber);
-                    firstNumber = operate(subtract,firstNumber,secondNumber);
-                    firstArrayNumbers = [];
-                    secondArrayNumbers = [];
-                    break;
-                case "*":
-                    displayCalculator.textContent = operate(multiply,firstNumber,secondNumber);
-                    firstNumber = operate(multiply,firstNumber,secondNumber);
-                    firstArrayNumbers = [];
-                    secondArrayNumbers = [];
-                    break;
-                case "/":
-                    if(secondNumber == 0){
-                        displayCalculator.textContent = "bruh";
-                    } else {
-                    displayCalculator.textContent = operate(divide,firstNumber,secondNumber);
-                    firstNumber = operate(divide,firstNumber,secondNumber);
-                    firstArrayNumbers = [];
-                    secondArrayNumbers = [];
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        })
-    })
+    button.addEventListener("click",getOperator);
+})
+resultBtn.addEventListener("click",() => {
+    // displayCalculator.textContent = 
+    getResult();
+    // console.log(getResult());
+    isOperatorCheck = false;
+});
 
+cleanBtn.addEventListener("click",cleanNumbers);
 
-
-
-
-
-    // if(secondNumber != undefined){
-    //     switch (selectOperator) {
-    //         case "+":
-    //                 displayCalculator.textContent = operate(add,firstNumber,secondNumber);
-    //                 firstNumber = operate(add,firstNumber,secondNumber);
-    //                 firstArrayNumbers = [];
-    //                 secondArrayNumbers = [];
-    //                 break;
-    //         case "-":
-    //                 displayCalculator.textContent = operate(subtract,firstNumber,secondNumber);
-    //                 firstNumber = operate(subtract,firstNumber,secondNumber);
-    //                 // secondNumber = 0;
-    //                 firstArrayNumbers = [];
-    //                 secondArrayNumbers = [];
-    //                 break;
-    //         case "*":
-    //                 displayCalculator.textContent = operate(multiply,firstNumber,secondNumber);
-    //                 firstNumber = operate(multiply,firstNumber,secondNumber);
-    //                 // secondNumber = 0;
-    //                 firstArrayNumbers = [];
-    //                 secondArrayNumbers = [];
-    //                 break;
-    //         case "/":
-    //                 displayCalculator.textContent = operate(divide,firstNumber,secondNumber);
-    //                 firstNumber = operate(divide,firstNumber,secondNumber);
-    //                 // secondNumber = 0;
-    //                 firstArrayNumbers = [];
-    //                 secondArrayNumbers = [];
-    //                 break;
-    //         default:
-    //                 break;
-    //     }
-    // }
+deleteBtn.addEventListener("click",deleteNumber);
