@@ -124,9 +124,6 @@ function getResult(){
             default:
                 break;
         };
-        console.log(firstNumber);
-        console.log(secondNumber);
-        console.log(result);
         displayCalculator.textContent = result;
         if(result == "bruh"){
             firstNumber = 0;
@@ -134,7 +131,8 @@ function getResult(){
             firstNumber = result;
         };
         lastOperator = undefined;
-        firstArrayNumbers = [];
+        firstArrayNumbers = firstNumber.toString().split("");
+        console.log(firstArrayNumbers);
         secondArrayNumbers = [];
         // return result;
     };
