@@ -33,3 +33,6 @@
         -- Else if the user click "result":
         
             * Save the result for another operation. ✔️
+
+            Foto de <a href="https://unsplash.com/@jessbaileydesigns?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Jess Bailey</a> en <a href="https://unsplash.com/es/s/fotos/desktop?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  
